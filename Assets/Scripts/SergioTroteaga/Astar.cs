@@ -1,4 +1,5 @@
-﻿            
+﻿
+using Assets.Scripts.SergioTroteaga;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,22 +14,28 @@ namespace Assets.Scripts
     {
 
 
-       private LinkedList<State> encontrados;
-       private SortedList<float,Node> porExplorar;
+       private LinkedList<State> cerrados;
+       private PriorityQueue porExplorar;
        private Stack<Node> solution;
-        private GenerateMap map;
-            public Astar(State start, GenerateMap map)
+       private GenerateMap map;
+       private Vector2 final;
+       
+            public Astar(Vector2 start, GenerateMap map,Vector2 final)
         {
             
-            encontrados = new LinkedList<State>();
-            porExplorar = new SortedList<float, Node>();
+            cerrados = new LinkedList<State>();
+            porExplorar = new PriorityQueue();
             solution = new Stack<Node>();
 
             this.map = map;
-            encontrados.AddLast(start);
-            porExplorar.Add(0,new Node(start, null));
-            Debug.Log("WOn ");
-            while (porExplorar.Count > 0 || solution.Count <= 0)
+            this.final = final;
+            State initial = new State((int)start.x, (int)start.y);
+            Node first = new Node(initial, null);
+            first.fCost = heuristic(first.state.position);
+            first.acumuletedCost = 0;
+            porExplorar.push(first);
+
+            while ( porExplorar.isEmpty() || solution.Count <= 0)
             {
                
 
@@ -41,19 +48,10 @@ namespace Assets.Scripts
             }
 
         }
-        public Move.MoveDirection GetNextMove(Vector2 currentPos, GenerateMap map)
-        {
-
-            return solution.Pop().state.from;
-
-
-
-        }
     
     public void explore()
         {
-            Node node = porExplorar.Values[0];
-            porExplorar.Remove(porExplorar.Keys[0]);
+            Node node = porExplorar.pop();
 
             Debug.Log(node.state.position);
 
@@ -72,32 +70,41 @@ namespace Assets.Scripts
                 
                 //Si sale de rango no exploramos
                 if ( state.position.y >= map.rows  ||  state.position.x >= map.cols )
-                    break;
+                    continue;
                 //Si es un muro no exploramos
                 if (map.GetTile((int)state.position.y, (int)state.position.x) == GenerateMap.TileType.Wall)
                 {
-                   
-                    break;
-                }
-                if (isNew(state))
-                {
-                    
-                    encontrados.AddLast(state);
-                    porExplorar.Add(heuristic(state.position,new State(13,7).position),new Node(state, node));
 
-                    Debug.Log("As");
+                    continue;
+                }
+                if (!isClose(state))
+                {
+                    continue;
+                    
+                }
+                else
+                {
+                    if (porExplorar.isBetter(node))
+                    {
+
+                    }
+                    porExplorar.push(node);
+
                 }
             }
         }
-        static public float heuristic(Vector2 a, Vector2 b)
+        public Move.MoveDirection GetNextMove(Vector2 currentPos, GenerateMap map)
         {
-
-
-            return Math.Abs(a.x - b.x) + Math.Abs(a.y - b.y);
+            return solution.Pop().state.from;
+        }
+       
+         public float heuristic(Vector2 a)
+        {
+            return Math.Abs(a.x - final.x) + Math.Abs(a.y - final.y);
         } 
-        private bool isNew(State state)
+        private bool isClose(State state)
         {
-            foreach (State old in encontrados)
+            foreach (State old in cerrados)
             {
                 if (old.position == state.position)
                     return false;
@@ -108,11 +115,8 @@ namespace Assets.Scripts
         public bool isSolution(Node node)
         {
             if ( map.GetTile((int)node.state.position.y, (int)node.state.position.x) == GenerateMap.TileType.Goal)
-            {
-               
+            { 
                 return true;
-
-
             }
             
             return false;

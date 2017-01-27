@@ -20,7 +20,7 @@ public class Move : MonoBehaviour
     private Rigidbody2D rb;
     public float speed=1.0f;
     private GameManager gameManager;
-    private Amplitud amplitud;
+    private Astar amplitud;
     private Vector2 last;
     float deltaTime= 0.0f;
     public IMind MindController { get; set; }
@@ -121,7 +121,7 @@ public class Move : MonoBehaviour
         }
         if(amplitud == null)
         {
-            amplitud = new Amplitud(new State(0, 0), gameManager.Map);
+            amplitud = new Astar(new Vector2(0, 0), gameManager.Map,new Vector2(13,7));
             MindController = amplitud;
         }
         if (!AtDestination())

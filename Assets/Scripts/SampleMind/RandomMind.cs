@@ -3,6 +3,7 @@ using System.Collections;
 
 using Assets.Scripts;
 
+
 public class RandomMind : IMind {
     public RandomMind()
     {
