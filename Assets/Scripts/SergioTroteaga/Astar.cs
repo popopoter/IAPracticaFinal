@@ -52,13 +52,12 @@ namespace Assets.Scripts
     public void explore()
         {
             Node node = porExplorar.pop();
-
+            cerrados.AddLast(node.state);
             Debug.Log(node.state.position);
 
             if (isSolution(node))
             {
-                
-                Debug.Log("WIN WIN WIN");
+                Debug.Log("SOLUTIOOON");
                 queueSolution(node);
                 return;
 
@@ -82,15 +81,25 @@ namespace Assets.Scripts
                     continue;
                     
                 }
-                else
-                {
-                    if (porExplorar.isBetter(node))
+                Node newNode = new Node(state, node);
+                newNode.acumuletedCost = node.acumuletedCost + 1;
+                newNode.fCost = newNode.acumuletedCost + heuristic(newNode.state.position);
+               if (porExplorar.contains(node))
                     {
+                    if(porExplorar.lastVisited.Value.acumuletedCost > node.acumuletedCost)
+                    {
+                        porExplorar.lastVisited.Value = node;
+                        
+                    }
 
                     }
-                    porExplorar.push(node);
+                else
+                {
+                    porExplorar.push(newNode);
 
-                }
+                }   
+
+                
             }
         }
         public Move.MoveDirection GetNextMove(Vector2 currentPos, GenerateMap map)
@@ -114,10 +123,9 @@ namespace Assets.Scripts
 
         public bool isSolution(Node node)
         {
-            if ( map.GetTile((int)node.state.position.y, (int)node.state.position.x) == GenerateMap.TileType.Goal)
-            { 
+            if(node.state.position.Equals(final))
                 return true;
-            }
+            
             
             return false;
         }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Assets.Scripts
 {
-     class State
+     public class State
     {
        public  Vector2 position;
         public Move.MoveDirection from;

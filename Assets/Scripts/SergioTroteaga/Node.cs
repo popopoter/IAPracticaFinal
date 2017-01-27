@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Assets.Scripts
 {
-    class Node
+   public  class Node
     {
         public State state;
         public Node father;

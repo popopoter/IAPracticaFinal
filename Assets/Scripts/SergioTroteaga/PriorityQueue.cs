@@ -2,15 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace Assets.Scripts.SergioTroteaga
 {
-    class PriorityQueue 
+    public class PriorityQueue 
     {
-        private List< Node> list;
+        public LinkedListNode<Node> lastVisited;
+        public LinkedList <Node> list;
         public PriorityQueue(){
 
-            list = new  List<Node>();
+            list = new LinkedList<Node>();
 
             }
         public bool isEmpty()
@@ -23,39 +25,46 @@ namespace Assets.Scripts.SergioTroteaga
         }
         public Node pop()
         {
-            Node min = null;
-            foreach (Node node in list)
-            {
-                if(min == null)
-                {
-                    min = node;
-                }
-                if(min.fCost > node.fCost)
-                {
-                    min = node;
-                }
-            }
-            list.Remove(min);
+            Node min = list.First.Value;
+
+         
+            list.RemoveFirst();
             return min;
         }
         public void push(Node node)
         {
-            
-            list.Add(node);
-        }
-        public bool isBetter(Node node)             
-        {
-            int oldIndx = list.IndexOf(node);
-            if (list[oldIndx].acumuletedCost > node.acumuletedCost)
+            if (list.Count == 0)
             {
-                list[oldIndx].acumuletedCost = node.acumuletedCost;
-                list[oldIndx].father = node.father;
-                list[oldIndx].state.from = node.state.from;
-               
+                list.AddFirst(node);
+                return;
             }
-                
-            return list.Contains(node);
+            LinkedListNode<Node> OldNode = list.First;
+            while(OldNode != null)
+            {
+                if (node.fCost < OldNode.Value.fCost)
+                {
+                    list.AddBefore(OldNode, node);
+                    return;
+                }
+                OldNode = OldNode.Next;
+            }
+            list.AddLast(node);
         }
+        public bool contains(Node node)
+        {
+            LinkedListNode<Node> oldNode = list.First;
+            while (oldNode != null)
+            {
+                if (oldNode.Value.Equals(node))
+                {
+                    lastVisited = oldNode;
+                    return true;
+                }
 
+                oldNode = oldNode.Next;
+            }
+
+            return false;
+        }
     }
 }
