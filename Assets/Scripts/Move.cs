@@ -1,10 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography.X509Certificates;
-using Completed;
-
 using Assets.Scripts;
+
 
 public class Move : MonoBehaviour
 {
@@ -20,9 +16,11 @@ public class Move : MonoBehaviour
     private Rigidbody2D rb;
     public float speed=1.0f;
     private GameManager gameManager;
-    private Astar amplitud;
+    private Astar astar;
+    private Amplitud amplitud;
     private Vector2 last;
-    float deltaTime= 0.0f;
+    private State state;
+
     public IMind MindController { get; set; }
 
     public bool keyControl = false;
@@ -32,8 +30,13 @@ public class Move : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
+        amplitud = new Amplitud(state, gameManager.Map);
+        MindController = amplitud;
 
-        MindController = new RandomMind();
+
+        /*astar = new Astar(new Vector2(0, 0), gameManager.Map, new Vector2(13, 7));
+        MindController = astar;
+        */    
     }
 
     public void MoveLeft()
@@ -113,17 +116,13 @@ public class Move : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        deltaTime += (Time.deltaTime - deltaTime) * 0.1f;
+
         if (gameManager == null)
         {
             var gO = GameObject.Find("GameManager") as GameObject;
             gameManager = gO.GetComponent<GameManager>();
         }
-        if(amplitud == null)
-        {
-            amplitud = new Astar(new Vector2(0, 0), gameManager.Map,new Vector2(13,7));
-            MindController = amplitud;
-        }
+            
         if (!AtDestination())
         {
             MoveNeed = false;
@@ -170,20 +169,6 @@ public class Move : MonoBehaviour
             }
         }
     }
-    void OnGUI()
-    {
-        int w = Screen.width, h = Screen.height;
 
-        GUIStyle style = new GUIStyle();
-
-        Rect rect = new Rect(0, 0, w, h * 2 / 100);
-        style.alignment = TextAnchor.UpperLeft;
-        style.fontSize = h * 2 / 100;
-        style.normal.textColor = new Color(0.0f, 1.0f, 0.0f, 1.0f);
-        float msec = deltaTime * 1000.0f;
-        float fps = 1.0f / deltaTime;
-        string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
-        GUI.Label(rect, text, style);
-    }
     public bool MoveNeed { get; set; }
 }
