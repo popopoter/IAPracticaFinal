@@ -30,13 +30,7 @@ public class Move : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
 
-        amplitud = new Amplitud(state, gameManager.Map);
-        MindController = amplitud;
-
-
-        /*astar = new Astar(new Vector2(0, 0), gameManager.Map, new Vector2(13, 7));
-        MindController = astar;
-        */    
+        MindController = new RandomMind();
     }
 
     public void MoveLeft()
@@ -122,7 +116,25 @@ public class Move : MonoBehaviour
             var gO = GameObject.Find("GameManager") as GameObject;
             gameManager = gO.GetComponent<GameManager>();
         }
-            
+
+        if (amplitud == null)
+        {
+            amplitud = new Amplitud(new Vector2(0, 0), gameManager.Map);
+            MindController = amplitud;
+        }
+        /*
+        if(estrella == null)
+        {
+            estrella = new Astar(new Vector2(0, 0), gameManager.Map,new Vector2(13,7));
+            MindController = estrella;
+        }*/
+        /*
+        if (control == null)
+        {
+            control = new AMind();
+            MindController = control;
+        }
+        */
         if (!AtDestination())
         {
             MoveNeed = false;

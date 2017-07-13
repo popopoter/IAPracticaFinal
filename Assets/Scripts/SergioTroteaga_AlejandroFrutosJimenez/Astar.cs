@@ -12,6 +12,7 @@ namespace Assets.Scripts{
        private GenerateMap map;
        private Vector2 final;
        
+        //constructor en el que se llama a explore y se usa la heuristica para calcular el mejor camino
        public Astar(Vector2 start, GenerateMap map,Vector2 final){
             
             cerrados = new LinkedList<State>();
@@ -37,6 +38,7 @@ namespace Assets.Scripts{
             
         }
     
+    //funcion que se encarga de buscar en explorar en el mapa y ver en que nodo esta 
     public void explore(){
 
             Node node = porExplorar.pop();
@@ -78,6 +80,7 @@ namespace Assets.Scripts{
             }
         }
         
+        //adonde vas a moverte
         public Move.MoveDirection GetNextMove(Vector2 currentPos, GenerateMap map){
             return solution.Pop().state.from;
         }
@@ -97,6 +100,7 @@ namespace Assets.Scripts{
             return true;
         }
 
+        //miras si es el nodo solucion
         public bool isSolution(Node node){
             if(node.state.position.Equals(final))
                 return true;
@@ -104,6 +108,7 @@ namespace Assets.Scripts{
             return false;
         }
 
+        //metes la solucion en el stack y luego la sacas para que no haga mas acciones
         public void queueSolution(Node solutionNode){
 
             Node walker = solutionNode;

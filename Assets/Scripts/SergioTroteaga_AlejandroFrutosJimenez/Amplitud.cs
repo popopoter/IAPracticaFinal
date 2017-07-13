@@ -12,15 +12,16 @@ namespace Assets.Scripts{
        private GenerateMap map;
     
         //constructor en el que creas la lista,cola y pila, y en el que generas el mapa        
-        public Amplitud(State start, GenerateMap map){
+        public Amplitud(Vector2 start, GenerateMap map){
             
             encontrados = new LinkedList<State>();
             porExplorar = new Queue<Node>();
             solution = new Stack<Node>();
 
             this.map = map;
-            encontrados.AddLast(start);
-            porExplorar.Enqueue(new Node(start, null));
+            State initial = new State((int)start.x, (int)start.y);
+            Node first = new Node(initial, null);
+            porExplorar.Enqueue(first);
             Debug.Log("Comenzamos con amplitud ");
 
             while (porExplorar.Count > 0 && solution.Count <= 0){
